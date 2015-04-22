@@ -1,0 +1,102 @@
+package wimmity.rsstraining;
+
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
+import android.util.Xml;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+/**
+ * Created by teru123123 on 15/04/21.
+ */
+public class RssParserTask extends AsyncTask<String, Integer, RssListAdapter> {
+
+    private RssReader mActivity;
+    private RssListAdapter mAdapter;
+    private ProgressDialog mProgressDialog;
+
+    //コンストラクタ
+    public RssParserTask(RssReader activity, RssListAdapter adapter){
+        this.mActivity = activity;
+        this.mAdapter = adapter;
+    }
+
+    //タスクを実行した直後にコールされる
+
+    @Override
+    protected void onPreExecute() {
+//        super.onPreExecute();
+        mProgressDialog = new ProgressDialog(mActivity);
+        mProgressDialog.setMessage("Now Loading....");
+        mProgressDialog.show();
+    }
+
+    //バックグラウンドにおける処理を担う。タスク実行時に渡された値を引数とする。
+
+
+    @Override
+    protected RssListAdapter doInBackground(String... params) {
+        RssListAdapter result = null;
+
+        try{
+            //HTTP経由でアクセスし、InputStreamを取得する
+            URL url = new URL(params[0]);
+            InputStream is = url.openConnection().getInputStream();
+            result = parseXML(is);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    protected void onPostExecute(RssListAdapter result) {
+        mProgressDialog.dismiss();
+        mActivity.setListAdapter(result);
+    }
+
+    private RssListAdapter parseXML(InputStream is) throws IOException, XmlPullParserException{
+        XmlPullParser parser = Xml.newPullParser();
+        try{
+            parser.setInput(is, null);
+            int eventType = parser.getEventType();
+            Item currentItem = null;
+
+            while (eventType != XmlPullParser.END_DOCUMENT){
+                String tag = null;
+                switch (eventType){
+                    case XmlPullParser.START_TAG:
+                        tag = parser.getName();
+                        if (tag.equals("item")){
+                            currentItem = new Item();
+                        } else if (currentItem != null){
+                            if(tag.equals("title")){
+                                currentItem.setmTitle(parser.nextText());
+                            } else if(tag.equals("description")){
+                                currentItem.setmDescription(parser.nextText());
+                            }
+                        }
+                        break;
+
+                    case XmlPullParser.END_TAG:
+                        tag = parser.getName();
+                        if (tag.equals("item")){
+                            mAdapter.add(currentItem);
+                        }
+
+                        break;
+
+                }
+                eventType = parser.next();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return mAdapter;
+    }
+}

@@ -13,7 +13,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import wimmity.rsstraining.R;
-import wimmity.rsstraining.ShowFragment2;
+import wimmity.rsstraining.ShowFragment;
 import wimmity.rsstraining.accounts.ITProItem;
 
 /**
@@ -54,7 +54,7 @@ public class ITProRssReader extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         ITProItem itProItem = mITProItems.get(position);
-        ShowFragment2 fragment2 = new ShowFragment2();
+        ShowFragment fragment2 = new ShowFragment();
         Bundle bdl2 = new Bundle();
         bdl2.putString("ITProTitle", (String) itProItem.getmTitle());
         bdl2.putString("ITProDesc", (String)itProItem.getmDescription());

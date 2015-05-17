@@ -20,8 +20,8 @@ public class ShowFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.item_detail, container, false);
-        String title = getArguments().getString("Title");
-        String descr = getArguments().getString("Desc");
+        String title = getArguments().getString("ITProTitle");
+        String descr = getArguments().getString("ITProDesc");
         TextView listtitle = (TextView)v.findViewById(R.id.item_detail_itpro_title);
         TextView medDesc = (TextView)v.findViewById(R.id.item_detail_itpro_desc);
         listtitle.setText(title);

@@ -1,5 +1,6 @@
 package wimmity.rsstraining.NikkeMedical;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -13,7 +14,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import wimmity.rsstraining.R;
-import wimmity.rsstraining.ShowFragment;
+import wimmity.rsstraining.ShowFragment2;
 import wimmity.rsstraining.accounts.MedicalItem;
 
 /**
@@ -26,6 +27,7 @@ import wimmity.rsstraining.accounts.MedicalItem;
  */
 public class MedicalRssReader  extends ListFragment{
 
+    private static final String MEDICAL_RSS_FEED_URL = "http://itpro.nikkeibp.co.jp/rss/ITpro.rdf";
     public static final int MENU_TIMERELOAD_MEDICAL = Menu.FIRST;
     private MedicalRssListAdapter mMedAdapter;
     private ArrayList<MedicalItem> mMedItems;
@@ -39,7 +41,8 @@ public class MedicalRssReader  extends ListFragment{
         //open a tasks
         //エラーで落ちる
 
-
+        MedicalRssParserTask tasks = new MedicalRssParserTask(MedicalRssReader.this, mMedAdapter);
+        tasks.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MEDICAL_RSS_FEED_URL);
         return v;
     }
 
@@ -58,10 +61,10 @@ public class MedicalRssReader  extends ListFragment{
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         MedicalItem medicalItem = mMedItems.get(position);
-        ShowFragment fragment = new ShowFragment();
+        ShowFragment2 fragment = new ShowFragment2();
         Bundle bdl = new Bundle();
-        bdl.putString("Title", (String) medicalItem.getTitle_m());
-        bdl.putString("Desc", (String) medicalItem.getDiscription());
+        bdl.putString("MedicalTitle", (String) medicalItem.getTitle_m());
+        bdl.putString("medicalDesc", (String) medicalItem.getDiscription());
         fragment.setArguments(bdl);
         fragment.show(getChildFragmentManager(), "tag");
     }

@@ -1,4 +1,4 @@
-package wimmity.rsstraining;
+package wimmity.rsstraining.ITPro;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -11,37 +11,39 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import wimmity.rsstraining.accounts.ITProItem;
+
 /**
  * Created by teru123123 on 15/04/21.
  */
-public class RssParserTask extends AsyncTask<String, Integer, RssListAdapter> {
+public class ITProRssParserTask extends AsyncTask<String, Integer, ITProRssListAdapter> {
 
-    private RssReader mActivity;
-    private RssListAdapter mAdapter;
-    private ProgressDialog mProgressDialog;
+    private ITProRssReader mActivity;
+    private ITProRssListAdapter mAdapter;
+    private ProgressDialog mProDia1;
+
 
     //コンストラクタ
-    public RssParserTask(RssReader activity, RssListAdapter adapter){
+    public ITProRssParserTask(ITProRssReader activity, ITProRssListAdapter adapter){
         this.mActivity = activity;
         this.mAdapter = adapter;
     }
 
     //タスクを実行した直後にコールされる
 
-    @Override
-    protected void onPreExecute() {
+//    @Override
+//    protected void onPreExecute() {
 //        super.onPreExecute();
-        mProgressDialog = new ProgressDialog(mActivity);
-        mProgressDialog.setMessage("Now Loading....");
-        mProgressDialog.show();
-    }
+//        mProDia1 = new ProgressDialog(mActivity.getActivity().getApplicationContext());
+//        mProDia1.setProgress(ProgressDialog.STYLE_SPINNER);
+//        mProDia1.setMessage("load");
+//        mProDia1.show();
+//    }
 
     //バックグラウンドにおける処理を担う。タスク実行時に渡された値を引数とする。
-
-
     @Override
-    protected RssListAdapter doInBackground(String... params) {
-        RssListAdapter result = null;
+    protected ITProRssListAdapter doInBackground(String... params) {
+        ITProRssListAdapter result = null;
 
         try{
             //HTTP経由でアクセスし、InputStreamを取得する
@@ -55,17 +57,17 @@ public class RssParserTask extends AsyncTask<String, Integer, RssListAdapter> {
     }
 
     @Override
-    protected void onPostExecute(RssListAdapter result) {
-        mProgressDialog.dismiss();
+    protected void onPostExecute(ITProRssListAdapter result) {
+//        mProDia1.dismiss();
         mActivity.setListAdapter(result);
     }
 
-    private RssListAdapter parseXML(InputStream is) throws IOException, XmlPullParserException{
+    private ITProRssListAdapter parseXML(InputStream is) throws IOException, XmlPullParserException{
         XmlPullParser parser = Xml.newPullParser();
         try{
             parser.setInput(is, null);
             int eventType = parser.getEventType();
-            Item currentItem = null;
+            ITProItem currentITProItem = null;
 
             while (eventType != XmlPullParser.END_DOCUMENT){
                 String tag = null;
@@ -73,12 +75,12 @@ public class RssParserTask extends AsyncTask<String, Integer, RssListAdapter> {
                     case XmlPullParser.START_TAG:
                         tag = parser.getName();
                         if (tag.equals("item")){
-                            currentItem = new Item();
-                        } else if (currentItem != null){
+                            currentITProItem = new ITProItem();
+                        } else if (currentITProItem != null){
                             if(tag.equals("title")){
-                                currentItem.setmTitle(parser.nextText());
+                                currentITProItem.setmTitle(parser.nextText());
                             } else if(tag.equals("description")){
-                                currentItem.setmDescription(parser.nextText());
+                                currentITProItem.setmDescription(parser.nextText());
                             }
                         }
                         break;
@@ -86,7 +88,7 @@ public class RssParserTask extends AsyncTask<String, Integer, RssListAdapter> {
                     case XmlPullParser.END_TAG:
                         tag = parser.getName();
                         if (tag.equals("item")){
-                            mAdapter.add(currentItem);
+                            mAdapter.add(currentITProItem);
                         }
 
                         break;

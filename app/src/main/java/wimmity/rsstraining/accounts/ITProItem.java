@@ -1,13 +1,13 @@
-package wimmity.rsstraining;
+package wimmity.rsstraining.accounts;
 
 /**
  * Created by teru123123 on 15/04/21.
  */
-public class Item {
+public class ITProItem {
     private CharSequence mTitle;
     private CharSequence mDescription;
 
-    public Item(){
+    public ITProItem(){
         mTitle = "";
         mDescription = "";
     }
